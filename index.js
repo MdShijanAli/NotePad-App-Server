@@ -48,110 +48,43 @@ async function run() {
     })
 
       
+// get single note
 
-
-        app.get('/categories/:id', async (req, res) => {
+        app.get('/note/:id', async (req, res) => {
             const id = req.params;
             const query = { _id: new ObjectId(id) };
-            const category = await categoriesCollection.findOne(query);
-            res.send(category);
+            const result = await notesCollection.findOne(query);
+            res.send(result);
 
         })
 
+    //    delete single note
 
-
-
-
-
-
-        // post categories
-
-
-
-        
-
-       
-
-
-
-
-        app.delete('/costs/:id', async (req, res) => {
+        app.delete('/note/:id', async (req, res) => {
             const id = req.params;
             const filter = { _id: new ObjectId(id) }
-            const result = await costsCollection.deleteOne(filter);
-            res.send(result);
-        })
-
-        // get category name data
-
-
-        app.get('/funds/:category', async (req, res) => {
-            const category = req.params.category;
-            const filter = { category: category }
-            const result = await fundsCollection.find(filter).toArray();
-            res.send(result);
-        })
-
-        // get categories from email
-
-        app.get('/fundss/:user', async (req, res) => {
-            const user = req.params.user;
-            const filter = { user: user }
-            const result = (await fundsCollection.find(filter).sort({ "_id": -1 }).toArray());
+            const result = await notesCollection.deleteOne(filter);
             res.send(result);
         })
 
 
-       
+    //   update note
 
-
-
-
-
-
-        app.get('/costs/:category', async (req, res) => {
-            const category = req.params.category;
-            const filter = { category: category }
-            const result = await costsCollection.find(filter).toArray();
-            res.send(result);
-        })
-
-
-        // update value
-
-
-
-        app.put('/categories/:name/:user', async (req, res) => {
-            const name = req.params.name;
-            const user = req.params.user;
-            const value = req.body;
-            const filter = { name: name, user: user };
-            const options = { upsert: true }
-            const updateDoc = {
-                $set: value,
+    app.put('/note/:id', async (req, res) => {
+        const id = req.params.id;
+        const filter = { _id: new ObjectId(id) }
+        const note = req.body;
+        const option = { upsert: true }
+        const updateReview = {
+            $set: {
+                description: note.description
             }
-            const result = await categoriesCollection.updateOne(filter, updateDoc, options);
-
-            // console.log(result)
-
-            res.send(result);
-        })
-
-
-        // post new funds
-
-        app.post('/funds', async (req, res) => {
-            const category = req.body;
-            const result = await fundsCollection.insertOne(category);
-            res.send(result);
-        })
-
-       
+        }
+        const result = await notesCollection.updateOne(filter, updateReview, option)
+        res.send(result)
+    })
 
         
-
-
-
 
     }
     finally {
